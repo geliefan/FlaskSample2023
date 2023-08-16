@@ -29,10 +29,13 @@ class Task(db.Model):
     deadline = db.Column(db.Date)
     progress = db.Column(db.Integer)
 
-# データベースのテーブル作成処理
-@app.before_first_request
-def create_tables():
-    db.create_all()
+@app.before_request
+def ensure_db_exists():
+    # データベースの存在を確認。エラーが発生するとデータベースを作成。
+    try:
+        user_count = User.query.count()  # ユーザーの数を取得してデータベースの存在を確認
+    except:
+        db.create_all()  # エラーが発生した場合、データベースを作成
 
 # ルートとビュー関数の定義
 
